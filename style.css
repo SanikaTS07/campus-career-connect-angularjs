@@ -1,0 +1,743 @@
+/* ==========================================================================
+   Campus Career Connect – College Placement Management Portal
+   Style Sheet (style.css)
+   Stitch Modern Executive Neo-SaaS Design System
+   ========================================================================== */
+
+/* --- 1. CSS Variables & Design System Tokens --- */
+:root {
+  --color-primary-navy: #0B192C;       /* Midnight Navy */
+  --color-corporate-navy: #1E3E62;     /* Classic Corporate Navy */
+  --color-accent-azure: #008DDA;       /* Focused Bright Azure */
+  --color-accent-cyan: #41C9E2;        /* Luminous Cyan */
+  --color-ice-blue: #E8F1F5;           /* Soft Tint Surface */
+  --color-base-bg: #F8FAFC;            /* Slate-50 Base Canvas */
+  --color-card-bg: #FFFFFF;            /* Pure White Surfaces */
+  --color-text-main: #0B1C30;          /* High contrast text */
+  --color-text-muted: #64748B;         /* Slate muted text */
+  --color-border-subtle: #E2E8F0;      /* Hairline framing */
+  --color-border-light: #F1F5F9;       /* Divider */
+
+  /* Status Tokens */
+  --status-eligible-bg: #F0FDF4;
+  --status-eligible-border: #BBF7D0;
+  --status-eligible-text: #15803D;
+
+  --status-applied-bg: #EFF6FF;
+  --status-applied-border: #BFDBFE;
+  --status-applied-text: #1D4ED8;
+
+  --status-shortlisted-bg: #F5F3FF;
+  --status-shortlisted-border: #DDD6FE;
+  --status-shortlisted-text: #6D28D9;
+
+  --status-placed-bg: #ECFDF5;
+  --status-placed-border: #A7F3D0;
+  --status-placed-text: #047857;
+
+  --status-rejected-bg: #FEF2F2;
+  --status-rejected-border: #FECACA;
+  --status-rejected-text: #B91C1C;
+
+  --status-review-bg: #FFFBEB;
+  --status-review-border: #FDE68A;
+  --status-review-text: #B45309;
+
+  /* Typography */
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --shadow-sm: 0 1px 2px 0 rgba(11, 25, 44, 0.05);
+  --shadow-md: 0 4px 12px -2px rgba(11, 25, 44, 0.06), 0 2px 4px -1px rgba(11, 25, 44, 0.04);
+  --shadow-lg: 0 10px 25px -5px rgba(11, 25, 44, 0.08), 0 8px 10px -6px rgba(11, 25, 44, 0.03);
+}
+
+/* --- 2. Base & Reset --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-base-bg);
+  color: var(--color-text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--color-text-main);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.mono-data {
+  font-family: var(--font-mono);
+}
+
+a {
+  color: var(--color-accent-azure);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* --- 3. Layout Structure --- */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-wrapper {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+  flex: 1;
+}
+
+/* Role Switcher Floating Header */
+.role-switcher-bar {
+  background-color: var(--color-primary-navy);
+  color: #FFFFFF;
+  border-bottom: 1px solid var(--color-corporate-navy);
+  padding: 8px 16px;
+  font-size: 12px;
+}
+
+.role-switcher-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.role-tag-title {
+  color: var(--color-accent-cyan);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.role-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.role-btn {
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.role-btn:hover {
+  background-color: var(--color-corporate-navy);
+  color: #FFFFFF;
+}
+
+.role-btn.active {
+  background-color: var(--color-accent-azure);
+  color: #FFFFFF;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 141, 218, 0.3);
+}
+
+/* Top Institutional Navbar */
+.navbar {
+  background-color: var(--color-primary-navy);
+  color: #FFFFFF;
+  border-bottom: 1px solid var(--color-corporate-navy);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: var(--shadow-sm);
+}
+
+.navbar-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #FFFFFF;
+  text-align: left;
+}
+
+.brand-emblem {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, var(--color-accent-azure), var(--color-corporate-navy));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.brand-text h1 {
+  font-size: 16px;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.1;
+}
+
+.brand-text p {
+  font-size: 11px;
+  color: #94A3B8;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+/* Primary Tab Navigation */
+.nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+}
+
+.nav-tab-btn {
+  background: none;
+  border: none;
+  color: #CBD5E1;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-tab-btn:hover {
+  background-color: var(--color-corporate-navy);
+  color: #FFFFFF;
+}
+
+.nav-tab-btn.active {
+  background-color: var(--color-corporate-navy);
+  color: #FFFFFF;
+  border-bottom: 2px solid var(--color-accent-azure);
+}
+
+.badge-counter {
+  background-color: var(--color-accent-azure);
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 4px;
+}
+
+/* Toast Message */
+.toast-banner {
+  background-color: var(--color-primary-navy);
+  color: #FFFFFF;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 2px solid var(--color-accent-azure);
+  animation: slideDown 0.3s ease;
+}
+
+.toast-banner.error {
+  background-color: #7F1D1D;
+  border-bottom-color: #EF4444;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* --- 4. Cards & Stitch 3px Top Accent Stripe --- */
+.card {
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.2s ease;
+}
+
+.stripe-azure { border-top: 3px solid var(--color-accent-azure); }
+.stripe-cyan { border-top: 3px solid var(--color-accent-cyan); }
+.stripe-corporate { border-top: 3px solid var(--color-corporate-navy); }
+.stripe-emerald { border-top: 3px solid #10B981; }
+
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-primary-navy);
+}
+
+.card-subtitle {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* --- 5. KPI Metric Cards Grid --- */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.kpi-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.kpi-value {
+  font-size: 28px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  color: var(--color-text-main);
+  margin: 6px 0 2px;
+}
+
+.kpi-subtext {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* --- 6. Stitch Placement Status Badges --- */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.status-eligible {
+  background-color: var(--status-eligible-bg);
+  border-color: var(--status-eligible-border);
+  color: var(--status-eligible-text);
+}
+
+.status-applied {
+  background-color: var(--status-applied-bg);
+  border-color: var(--status-applied-border);
+  color: var(--status-applied-text);
+}
+
+.status-shortlisted {
+  background-color: var(--status-shortlisted-bg);
+  border-color: var(--status-shortlisted-border);
+  color: var(--status-shortlisted-text);
+}
+
+.status-placed, .status-selected {
+  background-color: var(--status-placed-bg);
+  border-color: var(--status-placed-border);
+  color: var(--status-placed-text);
+}
+
+.status-rejected {
+  background-color: var(--status-rejected-bg);
+  border-color: var(--status-rejected-border);
+  color: var(--status-rejected-text);
+}
+
+.status-review {
+  background-color: var(--status-review-bg);
+  border-color: var(--status-review-border);
+  color: var(--status-review-text);
+}
+
+/* --- 7. Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--color-primary-navy);
+  color: #FFFFFF;
+  border-color: var(--color-primary-navy);
+}
+.btn-primary:hover {
+  background-color: var(--color-corporate-navy);
+}
+
+.btn-azure {
+  background-color: var(--color-accent-azure);
+  color: #FFFFFF;
+  border-color: var(--color-accent-azure);
+}
+.btn-azure:hover {
+  background-color: #0077B6;
+}
+
+.btn-outline {
+  background-color: #FFFFFF;
+  color: var(--color-corporate-navy);
+  border-color: var(--color-border-subtle);
+}
+.btn-outline:hover {
+  background-color: var(--color-ice-blue);
+  border-color: var(--color-accent-azure);
+}
+
+.btn-success {
+  background-color: #10B981;
+  color: #FFFFFF;
+  border-color: #10B981;
+}
+.btn-success:hover {
+  background-color: #059669;
+}
+
+.btn-danger {
+  background-color: #EF4444;
+  color: #FFFFFF;
+}
+.btn-danger:hover {
+  background-color: #DC2626;
+}
+
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+/* --- 8. Form Inputs --- */
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 5px;
+}
+
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 4px;
+  background-color: #FFFFFF;
+  color: var(--color-text-main);
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--color-accent-azure);
+  box-shadow: 0 0 0 3px rgba(0, 141, 218, 0.15);
+}
+
+/* --- 9. Department Bar Graph (Dashboard Requirement #8) --- */
+.barchart-container {
+  padding: 16px 0;
+}
+
+.barchart-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.barchart-dept {
+  width: 130px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary-navy);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.barchart-track {
+  flex: 1;
+  background-color: #EFF4FF;
+  height: 22px;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--color-border-subtle);
+}
+
+.barchart-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-corporate-navy), var(--color-accent-azure));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.barchart-stats {
+  width: 150px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.barchart-stats strong {
+  color: #15803D;
+  font-family: var(--font-mono);
+}
+
+/* --- 10. Top 3 Placed Students Podium (Dashboard Requirement #8) --- */
+.top-students-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.student-card {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+  padding: 18px;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.student-card.rank-1 {
+  border-top: 4px solid #F59E0B; /* Gold */
+}
+.student-card.rank-2 {
+  border-top: 4px solid #94A3B8; /* Silver */
+}
+.student-card.rank-3 {
+  border-top: 4px solid #CD7F32; /* Bronze */
+}
+
+.student-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-ice-blue);
+  color: var(--color-accent-azure);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.student-package {
+  font-size: 20px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: #047857;
+  margin-top: 6px;
+}
+
+/* --- 11. Tables --- */
+.data-table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12px;
+}
+
+.data-table th {
+  background-color: #F8FAFC;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  font-weight: 700;
+}
+
+.data-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-main);
+  vertical-align: middle;
+}
+
+.data-table tr:hover {
+  background-color: rgba(232, 241, 245, 0.4);
+}
+
+/* --- 12. Skills Chips --- */
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background-color: var(--color-ice-blue);
+  color: var(--color-corporate-navy);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin: 2px;
+}
+
+.skill-tag .remove-btn {
+  background: none;
+  border: none;
+  color: #64748B;
+  cursor: pointer;
+  font-size: 12px;
+  margin-left: 2px;
+}
+.skill-tag .remove-btn:hover {
+  color: #B91C1C;
+}
+
+/* --- 13. Job Cards Grid --- */
+.drives-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.drive-card {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
+
+.drive-card:hover {
+  border-color: var(--color-accent-azure);
+  box-shadow: var(--shadow-md);
+}
+
+/* --- 14. Responsive Layout Breakpoints --- */
+@media (max-width: 768px) {
+  .navbar-inner {
+    flex-direction: column;
+    height: auto;
+    padding: 12px 16px;
+    gap: 12px;
+  }
+  .nav-tabs {
+    width: 100%;
+    padding-bottom: 6px;
+  }
+  .barchart-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .barchart-dept {
+    width: 100%;
+    text-align: left;
+  }
+  .barchart-track {
+    width: 100%;
+  }
+  .barchart-stats {
+    width: 100%;
+  }
+}

@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="en" ng-app="campusApp">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Career Connect – College Placement Management Portal</title>
+  <meta name="description" content="Beginner-friendly AngularJS 1.x College Placement Management Portal connecting Students, Recruiters, and Placement Trainers." />
+  
+  <!-- Google Fonts: Plus Jakarta Sans, Inter, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Campus Career Connect Stitch CSS -->
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- AngularJS 1.8.2 CDN -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</head>
+<body ng-controller="MainController">
+
+  <!-- ==========================================
+       1. Top Role Switcher Header Bar
+       ========================================== -->
+  <div class="role-switcher-bar">
+    <div class="role-switcher-inner">
+      <div class="role-tag-title">
+        <span>★ Quick Role Switcher:</span>
+        <span style="color: #94A3B8; font-weight: normal; text-transform: none;">Active Role: <strong style="color: #FFFFFF;">{{ currentRole | uppercase }}</strong></span>
+      </div>
+
+      <div class="role-buttons-group">
+        <button class="role-btn" ng-class="{'active': currentRole === 'student'}" ng-click="switchRole('student')">
+          🎓 Student Portal
+        </button>
+        <button class="role-btn" ng-class="{'active': currentRole === 'company'}" ng-click="switchRole('company')">
+          🏢 Company / Recruiter
+        </button>
+        <button class="role-btn" ng-class="{'active': currentRole === 'trainer'}" ng-click="switchRole('trainer')">
+          👨‍🏫 Placement Trainer / TPO
+        </button>
+        <button class="role-btn" ng-class="{'active': activeTab === 'login'}" ng-click="navigate('login')">
+          🔐 Login Page
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Banner -->
+  <div class="toast-banner" ng-class="toastType" ng-if="toastMessage">
+    {{ toastMessage }}
+  </div>
+
+  <!-- ==========================================
+       2. Institutional Navigation Bar
+       ========================================== -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <!-- Brand Logo & Title -->
+      <button class="navbar-brand" ng-click="navigate('dashboard')">
+        <div class="brand-emblem">C³</div>
+        <div class="brand-text">
+          <h1>Campus Career Connect</h1>
+          <p>College Placement Management Portal</p>
+        </div>
+      </button>
+
+      <!-- Main Navigation Tabs -->
+      <nav class="nav-tabs">
+        <button class="nav-tab-btn" ng-class="{'active': activeTab === 'dashboard'}" ng-click="navigate('dashboard')">
+          📊 Placement Dashboard
+        </button>
+        <button class="nav-tab-btn" ng-class="{'active': activeTab === 'student_portal'}" ng-click="navigate('student_portal')">
+          🎓 Student Portal
+        </button>
+        <button class="nav-tab-btn" ng-class="{'active': activeTab === 'company_portal'}" ng-click="navigate('company_portal')">
+          🏢 Company Portal
+        </button>
+        <button class="nav-tab-btn" ng-class="{'active': activeTab === 'trainer_portal'}" ng-click="navigate('trainer_portal')">
+          👨‍🏫 Placement Trainer
+        </button>
+        <button class="nav-tab-btn" ng-class="{'active': activeTab === 'feedback'}" ng-click="navigate('feedback')">
+          💬 Feedback & Insights
+        </button>
+        <button class="nav-tab-btn" ng-class="{'active': activeTab === 'notifications'}" ng-click="navigate('notifications')">
+          🔔 Notifications
+          <span class="badge-counter" ng-if="getUnreadCount() > 0">{{ getUnreadCount() }}</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       3. Main Content Viewport
+       ========================================== -->
+  <main class="main-wrapper">
+
+    <!-- ==========================================================================
+         SCREEN 1: LOGIN PAGE
+         ========================================================================== -->
+    <div ng-show="activeTab === 'login'" class="card stripe-azure" style="max-width: 520px; margin: 30px auto;">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Campus Career Connect Login</h2>
+          <p class="card-subtitle">Choose your portal role to authenticate</p>
+        </div>
+        <span class="status-badge status-applied">AngularJS 1.x</span>
+      </div>
+      <div class="card-body">
+        <form ng-submit="performLogin()">
+          <div class="form-group">
+            <label class="form-label">Select Your Portal Role</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+              <button type="button" class="btn" ng-class="loginForm.role === 'student' ? 'btn-azure' : 'btn-outline'" ng-click="loginForm.role = 'student'; loginForm.email = 'rohan.sharma@campus.edu'">
+                Student
+              </button>
+              <button type="button" class="btn" ng-class="loginForm.role === 'company' ? 'btn-azure' : 'btn-outline'" ng-click="loginForm.role = 'company'; loginForm.email = 'sarah.jenkins@cisco.com'">
+                Recruiter
+              </button>
+              <button type="button" class="btn" ng-class="loginForm.role === 'trainer' ? 'btn-azure' : 'btn-outline'" ng-click="loginForm.role = 'trainer'; loginForm.email = 'dean.placements@campus.edu'">
+                Trainer / TPO
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Campus Email Address</label>
+            <input type="email" class="form-input" ng-model="loginForm.email" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password / Security PIN</label>
+            <input type="password" class="form-input" ng-model="loginForm.password" required />
+          </div>
+
+          <div style="background-color: var(--color-ice-blue); border: 1px solid var(--color-border-subtle); padding: 10px 14px; border-radius: 6px; font-size: 11px; color: var(--color-corporate-navy); margin-bottom: 16px;">
+            <strong>Demo Autofill:</strong> Logging in as <strong>{{ loginForm.role | uppercase }}</strong> with test credentials.
+          </div>
+
+          <button type="submit" class="btn btn-azure" style="width: 100%; padding: 10px; font-size: 13px;">
+            Sign In to {{ loginForm.role | uppercase }} Workspace
+          </button>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- ==========================================================================
+         SCREEN 2: PLACEMENT DASHBOARD (With Bar Graph & Top 3 Placed Students)
+         ========================================================================== -->
+    <div ng-show="activeTab === 'dashboard'" ng-controller="DashboardController">
+      
+      <!-- Welcome Banner -->
+      <div style="background: linear-gradient(135deg, var(--color-primary-navy), var(--color-corporate-navy)); color: #FFFFFF; padding: 24px; border-radius: 8px; margin-bottom: 24px; border: 1px solid var(--color-corporate-navy); display: flex; justify-content: space-between; align-items: center; flex-wrap: gap;">
+        <div>
+          <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--color-accent-cyan); letter-spacing: 0.05em;">Academic Placement Cycle 2025–26</span>
+          <h2 style="font-size: 26px; font-weight: 800; color: #FFFFFF; margin-top: 4px;">Institutional Placement Dashboard</h2>
+          <p style="font-size: 13px; color: #CBD5E1; margin-top: 4px; max-width: 650px;">Real-time department-wise recruitment monitoring, hiring partner packages, and candidate milestone highlights.</p>
+        </div>
+        <button class="btn btn-azure" ng-click="navigate('student_portal')">
+          Open Student Portal →
+        </button>
+      </div>
+
+      <!-- Key Placement KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card stripe-azure">
+          <p class="kpi-title">Overall Placement Rate</p>
+          <p class="kpi-value">{{ getOverallRate() }}%</p>
+          <p class="kpi-subtext">{{ getTotalPlaced() }} of {{ getTotalStudents() }} graduating engineers placed</p>
+        </div>
+        <div class="kpi-card stripe-cyan">
+          <p class="kpi-title">Highest Salary Package</p>
+          <p class="kpi-value" style="color: #047857;">₹ 44.0 LPA</p>
+          <p class="kpi-subtext">Google SDE-I (Computer Science & Engg)</p>
+        </div>
+        <div class="kpi-card stripe-corporate">
+          <p class="kpi-title">Average Campus CTC</p>
+          <p class="kpi-value">₹ 12.8 LPA</p>
+          <p class="kpi-subtext">Median Package: ₹ 10.5 LPA across streams</p>
+        </div>
+        <div class="kpi-card stripe-emerald">
+          <p class="kpi-title">Active Campus Recruiters</p>
+          <p class="kpi-value">180+</p>
+          <p class="kpi-subtext">Tier 1 Dream & Global Enterprises hiring</p>
+        </div>
+      </div>
+
+      <!-- DASHBOARD REQUIREMENT #8: Department-wise Placement Statistics using Bar Graph -->
+      <div class="card stripe-azure">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Department-wise Placement Statistics (Bar Graph)</h3>
+            <p class="card-subtitle">Visual placement percentage comparisons across all engineering streams</p>
+          </div>
+          <span class="status-badge status-placed">2026 Batch Audit</span>
+        </div>
+        <div class="card-body">
+          <div class="barchart-container">
+            <!-- AngularJS ng-repeat for Bar Graph -->
+            <div class="barchart-row" ng-repeat="dept in departments">
+              <div class="barchart-dept">{{ dept.name }} ({{ dept.code }})</div>
+              <div class="barchart-track">
+                <div class="barchart-fill" style="width: {{ dept.rate }}%;">
+                  {{ dept.rate }}%
+                </div>
+              </div>
+              <div class="barchart-stats">
+                Placed: <strong>{{ dept.placed }}</strong>/{{ dept.total }} • Avg: <strong>₹ {{ dept.avgCtc }} LPA</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DASHBOARD REQUIREMENT #8: Top 3 Placed Students Podium -->
+      <div class="card stripe-cyan">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Top 3 Placed Students (Honor Roll)</h3>
+            <p class="card-subtitle">Highest campus salary packages secured in the 2026 recruitment drive</p>
+          </div>
+          <span class="status-badge status-shortlisted">Star Achievers</span>
+        </div>
+        <div class="card-body">
+          <div class="top-students-grid">
+            <!-- AngularJS ng-repeat for Top 3 Placed Students -->
+            <div class="student-card" ng-repeat="top in topPlacedStudents" ng-class="'rank-' + top.rank">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                  <div class="student-avatar">{{ top.initials }}</div>
+                  <span class="status-badge" ng-class="{'status-placed': top.rank === 1, 'status-shortlisted': top.rank === 2, 'status-applied': top.rank === 3}">
+                    #{{ top.rank }} {{ top.badge }}
+                  </span>
+                </div>
+                <h4 style="font-size: 16px; font-weight: 700; margin-top: 12px; color: var(--color-primary-navy);">
+                  {{ top.name }}
+                </h4>
+                <p style="font-size: 11px; color: var(--color-text-muted); font-family: var(--font-mono);">
+                  USN: {{ top.usn }} • {{ top.department }}
+                </p>
+                <div style="margin-top: 10px; padding: 8px 12px; background-color: var(--color-base-bg); border-radius: 6px; border: 1px solid var(--color-border-subtle);">
+                  <div style="font-size: 12px; font-weight: 700; color: var(--color-corporate-navy);">{{ top.company }}</div>
+                  <div style="font-size: 11px; color: var(--color-text-muted);">{{ top.role }}</div>
+                </div>
+              </div>
+              <div class="student-package">
+                ₹ {{ top.package }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Department Metrics Detailed Table -->
+      <div class="card stripe-corporate">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Detailed Department Placement Matrix</h3>
+            <p class="card-subtitle">Breakdown of students registered, placed, average CTC, and peak CTC</p>
+          </div>
+        </div>
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Department</th>
+                <th>Dept Code</th>
+                <th>Batch Strength</th>
+                <th>Placed Count</th>
+                <th>Placement %</th>
+                <th>Average CTC</th>
+                <th>Highest CTC</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="dept in departments">
+                <td><strong>{{ dept.name }}</strong></td>
+                <td><span class="mono-data" style="color: var(--color-accent-azure); font-weight: 700;">{{ dept.code }}</span></td>
+                <td class="mono-data">{{ dept.total }}</td>
+                <td class="mono-data" style="color: #15803D; font-weight: 700;">{{ dept.placed }}</td>
+                <td>
+                  <span class="status-badge status-placed">{{ dept.rate }}%</span>
+                </td>
+                <td class="mono-data">₹ {{ dept.avgCtc }} LPA</td>
+                <td class="mono-data" style="font-weight: 700; color: var(--color-primary-navy);">₹ {{ dept.highestCtc }} LPA</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==========================================================================
+         SCREEN 3: STUDENT PORTAL
+         (Profile, Resume Upload, Job Openings, Eligibility Check, Applications)
+         ========================================================================== -->
+    <div ng-show="activeTab === 'student_portal'">
+      
+      <!-- Student Profile Card with Resume Upload -->
+      <div class="card stripe-azure">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Student Profile & Academic Credentials</h3>
+            <p class="card-subtitle">Verified college credentials and ATS placement resume</p>
+          </div>
+          <span class="status-badge" ng-class="student.placementStatus === 'Placed' ? 'status-placed' : 'status-review'">
+            ● Status: {{ student.placementStatus }} {{ student.placedCompany ? '(' + student.placedCompany + ')' : '' }}
+          </span>
+        </div>
+        <div class="card-body">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+            <div>
+              <span class="form-label">Full Name</span>
+              <p style="font-size: 15px; font-weight: 700;">{{ student.name }}</p>
+              <p style="font-size: 11px; color: var(--color-text-muted);">{{ student.email }}</p>
+            </div>
+            <div>
+              <span class="form-label">University Seat No. (USN)</span>
+              <p class="mono-data" style="font-size: 14px; font-weight: 700; color: var(--color-accent-azure);">{{ student.usn }}</p>
+              <p style="font-size: 11px; color: var(--color-text-muted);">{{ student.phone }}</p>
+            </div>
+            <div>
+              <span class="form-label">Department & Semester</span>
+              <p style="font-size: 14px; font-weight: 700;">{{ student.department }} ({{ student.deptCode }})</p>
+              <p style="font-size: 11px; color: var(--color-text-muted);">{{ student.semester }}</p>
+            </div>
+            <div>
+              <span class="form-label">Academic Scores</span>
+              <p class="mono-data" style="font-size: 15px; font-weight: 800; color: #047857;">CGPA: {{ student.cgpa }} / 10.0</p>
+              <p style="font-size: 11px; color: var(--color-text-muted);">10th: {{ student.tenthPercent }}% • 12th: {{ student.twelfthPercent }}% • Backlogs: {{ student.activeBacklogs }}</p>
+            </div>
+          </div>
+
+          <!-- Resume Upload Section -->
+          <div style="margin-top: 20px; padding: 16px; background-color: var(--color-base-bg); border-radius: 6px; border: 1px solid var(--color-border-subtle); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="font-size: 24px;">📄</div>
+              <div>
+                <p style="font-size: 13px; font-weight: 700; color: var(--color-primary-navy);">{{ student.resumeFileName }}</p>
+                <p style="font-size: 11px; color: var(--color-text-muted);">
+                  Uploaded {{ student.resumeUpdated }} • <strong style="color: #047857;">ATS Score: {{ student.atsScore }}/100</strong>
+                </p>
+              </div>
+            </div>
+            <div>
+              <!-- Beginner friendly resume upload trigger -->
+              <button class="btn btn-azure" ng-click="triggerResumeUpload()">
+                📤 Upload New Resume Version
+              </button>
+            </div>
+          </div>
+
+          <!-- Skills Management Section -->
+          <div style="margin-top: 18px;">
+            <span class="form-label">Technical Skills & Competencies</span>
+            <div style="margin-bottom: 8px;">
+              <span class="skill-tag" ng-repeat="skill in student.skills">
+                {{ skill }}
+                <button class="remove-btn" ng-click="removeSkill($index)" title="Remove skill">×</button>
+              </span>
+            </div>
+            <div style="display: flex; gap: 8px; max-width: 400px;">
+              <input type="text" class="form-input" placeholder="Add a skill (e.g. Java, Docker)..." ng-model="student.newSkillInput" ng-keydown="$event.keyCode === 13 && addSkill()" />
+              <button class="btn btn-outline" type="button" ng-click="addSkill()">+ Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Company Job Openings & Eligibility Verification -->
+      <div class="card stripe-cyan">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Available Company Job Openings</h3>
+            <p class="card-subtitle">Automatic real-time eligibility check based on CGPA, Department, and Backlogs</p>
+          </div>
+          <span class="status-badge status-applied">{{ drives.length }} Drives Available</span>
+        </div>
+        <div class="card-body">
+          <div class="drives-grid">
+            <div class="drive-card" ng-repeat="drive in drives">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                  <div>
+                    <h4 style="font-size: 16px; font-weight: 700; color: var(--color-primary-navy);">{{ drive.company }}</h4>
+                    <p style="font-size: 12px; color: var(--color-text-muted);">{{ drive.role }}</p>
+                  </div>
+                  <span class="status-badge status-shortlisted">{{ drive.tier }}</span>
+                </div>
+
+                <div style="margin: 12px 0 6px;">
+                  <span style="font-size: 20px; font-weight: 800; color: #047857; font-family: var(--font-mono);">₹ {{ drive.package }} LPA</span>
+                  <span style="font-size: 11px; color: var(--color-text-muted);">(Base: ₹ {{ drive.baseSalary }} LPA)</span>
+                </div>
+
+                <p style="font-size: 12px; color: #475569; margin-bottom: 10px;">{{ drive.description }}</p>
+
+                <div style="font-size: 11px; color: var(--color-text-muted); background: var(--color-base-bg); padding: 8px 10px; border-radius: 4px; border: 1px solid var(--color-border-subtle); margin-bottom: 10px;">
+                  <div>Cut-off: <strong>{{ drive.minCgpa }} CGPA</strong> • Max Backlogs: <strong>{{ drive.maxBacklogs }}</strong></div>
+                  <div>Branches: <strong>{{ drive.eligibleDepts.join(', ') }}</strong></div>
+                  <div>Required Skills: <span class="mono-data">{{ drive.requiredSkills.join(', ') }}</span></div>
+                  <div>Drive Date: <strong>{{ drive.driveDate }}</strong> (Deadline: {{ drive.deadline }})</div>
+                </div>
+              </div>
+
+              <!-- Eligibility Check Banner & Apply Button -->
+              <div style="padding-top: 10px; border-top: 1px solid var(--color-border-light); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <!-- Call $scope.checkEligibility -->
+                <div ng-init="elig = checkEligibility(student, drive)">
+                  <span class="status-badge status-eligible" ng-if="elig.eligible">
+                    ✓ Eligible to Apply
+                  </span>
+                  <span class="status-badge status-rejected" ng-if="!elig.eligible" title="{{ elig.reasons.join(' | ') }}">
+                    ✕ Criteria Not Met
+                  </span>
+                </div>
+
+                <div>
+                  <button class="btn btn-azure btn-sm" ng-if="!hasApplied(drive.id) && checkEligibility(student, drive).eligible" ng-click="applyForJob(drive)">
+                    Apply Now
+                  </button>
+                  <span class="status-badge status-applied" ng-if="hasApplied(drive.id)">
+                    ✓ Applied
+                  </span>
+                  <button class="btn btn-outline btn-sm" ng-if="!checkEligibility(student, drive).eligible" ng-click="applyForJob(drive)" style="opacity: 0.6;">
+                    Check Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Student's Application Status Tracking -->
+      <div class="card stripe-corporate">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">My Job Application Tracker</h3>
+            <p class="card-subtitle">Real-time status of your submissions across companies</p>
+          </div>
+          <span class="status-badge status-shortlisted">{{ applications.length }} Total Applications</span>
+        </div>
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Role & Package</th>
+                <th>Applied Date</th>
+                <th>Current Status</th>
+                <th>Next Round Details</th>
+                <th>Recruiter / TPO Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="app in applications | filter:{ studentUsn: student.usn }">
+                <td><strong>{{ app.company }}</strong></td>
+                <td>
+                  <div>{{ app.role }}</div>
+                  <span class="mono-data" style="color: #047857; font-weight: 700;">₹ {{ app.package }} LPA</span>
+                </td>
+                <td class="mono-data">{{ app.appliedDate }}</td>
+                <td>
+                  <span class="status-badge" ng-class="{
+                    'status-applied': app.status === 'Applied',
+                    'status-shortlisted': app.status === 'Shortlisted',
+                    'status-review': app.status === 'Interview Scheduled',
+                    'status-placed': app.status === 'Selected / Placed',
+                    'status-rejected': app.status === 'Rejected'
+                  }">
+                    {{ app.status }}
+                  </span>
+                </td>
+                <td>
+                  <div><strong>{{ app.currentStage }}</strong></div>
+                  <div style="font-size: 11px; color: var(--color-accent-azure);" ng-if="app.interviewDate">
+                    📅 {{ app.interviewDate }} ({{ app.interviewRoom }})
+                  </div>
+                </td>
+                <td style="font-size: 11px; color: var(--color-text-muted);">
+                  {{ app.notes }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==========================================================================
+         SCREEN 4: COMPANY / RECRUITER PORTAL
+         (Publish Job Openings, Filter/View Applicants, Shortlist & Select)
+         ========================================================================== -->
+    <div ng-show="activeTab === 'company_portal'">
+      
+      <!-- Company Recruiter Banner -->
+      <div style="background-color: var(--color-primary-navy); color: #FFFFFF; padding: 20px; border-radius: 8px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--color-accent-cyan);">Corporate Hiring Workspace</span>
+          <h2 style="font-size: 22px; font-weight: 800; color: #FFFFFF; margin-top: 2px;">{{ companyUser.companyName }} – Campus Recruitment Desk</h2>
+          <p style="font-size: 12px; color: #94A3B8;">Lead: {{ companyUser.name }} ({{ companyUser.email }})</p>
+        </div>
+        <span class="status-badge status-placed">Live Drive Active</span>
+      </div>
+
+      <!-- Publish Job Opening Form -->
+      <div class="card stripe-azure">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Publish New Campus Recruitment Drive</h3>
+            <p class="card-subtitle">Specify eligible departments, minimum CGPA, required skills, and backlog conditions</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <form ng-submit="publishJobOpening()">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+              <div class="form-group">
+                <label class="form-label">Company Name *</label>
+                <input type="text" class="form-input" ng-model="newDrive.company" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Role Title *</label>
+                <input type="text" class="form-input" ng-model="newDrive.role" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Total CTC Package (LPA) *</label>
+                <input type="number" step="0.5" class="form-input" ng-model="newDrive.package" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Package Tier</label>
+                <select class="form-select" ng-model="newDrive.tier">
+                  <option value="Tier 1 (Dream)">Tier 1 (Dream 25+ LPA)</option>
+                  <option value="Tier 2 (Super Dream)">Tier 2 (Super Dream 15–25 LPA)</option>
+                  <option value="Tier 3 (Core/Mass)">Tier 3 (Core/Mass &lt; 15 LPA)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+              <div class="form-group">
+                <label class="form-label">Minimum CGPA Cut-off</label>
+                <input type="number" step="0.1" min="5.0" max="10.0" class="form-input" ng-model="newDrive.minCgpa" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Maximum Backlogs Allowed</label>
+                <select class="form-select" ng-model="newDrive.maxBacklogs">
+                  <option value="0">0 Backlogs Only (Clean Record)</option>
+                  <option value="1">Max 1 Backlog</option>
+                  <option value="2">Max 2 Backlogs</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Drive Date & Deadline</label>
+                <input type="text" class="form-input" ng-model="newDrive.driveDate" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Required Skills (Comma separated)</label>
+                <input type="text" class="form-input" ng-model="newDrive.requiredSkillsText" placeholder="e.g. Python, SQL, Cloud" />
+              </div>
+            </div>
+
+            <!-- Department Eligibility Checkboxes -->
+            <div class="form-group">
+              <label class="form-label">Eligible Engineering Departments (Click to toggle)</label>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <button type="button" class="btn btn-sm" ng-repeat="dept in departments" ng-class="newDrive.eligibleDepts.indexOf(dept.code) !== -1 ? 'btn-azure' : 'btn-outline'" ng-click="toggleDeptSelection(dept.code)">
+                  {{ dept.code }} - {{ dept.name }}
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Role Description & Hiring Requirements</label>
+              <textarea class="form-textarea" rows="2" ng-model="newDrive.description"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-azure">
+              🚀 Publish Campus Drive to Students
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Applicant Screening & ATS Pipeline (Shortlist, Interview, Select) -->
+      <div class="card stripe-cyan">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Manage Student Applications (ATS Pipeline)</h3>
+            <p class="card-subtitle">Review candidate dossiers, shortlist for tests, schedule interviews, and release offers</p>
+          </div>
+          <span class="status-badge status-applied">{{ applications.length }} Total Applicants</span>
+        </div>
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Candidate Name</th>
+                <th>USN & Branch</th>
+                <th>CGPA</th>
+                <th>Applied For</th>
+                <th>Status</th>
+                <th>Interview / Stage</th>
+                <th style="text-align: right;">Recruiter Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="app in applications">
+                <td>
+                  <strong>{{ app.studentName }}</strong>
+                </td>
+                <td>
+                  <span class="mono-data">{{ app.studentUsn }}</span> ({{ app.studentDept }})
+                </td>
+                <td>
+                  <span class="mono-data" style="font-weight: 700; color: #047857;">{{ app.studentCgpa }}</span>
+                </td>
+                <td>
+                  <strong>{{ app.company }}</strong>
+                  <div style="font-size: 11px; color: var(--color-text-muted);">{{ app.role }}</div>
+                </td>
+                <td>
+                  <span class="status-badge" ng-class="{
+                    'status-applied': app.status === 'Applied',
+                    'status-shortlisted': app.status === 'Shortlisted',
+                    'status-review': app.status === 'Interview Scheduled',
+                    'status-placed': app.status === 'Selected / Placed',
+                    'status-rejected': app.status === 'Rejected'
+                  }">
+                    {{ app.status }}
+                  </span>
+                </td>
+                <td>
+                  <div style="font-size: 12px;">{{ app.currentStage }}</div>
+                  <div style="font-size: 11px; color: var(--color-accent-azure);" ng-if="app.interviewDate">
+                    {{ app.interviewDate }}
+                  </div>
+                </td>
+                <td style="text-align: right; white-space: nowrap;">
+                  <button class="btn btn-outline btn-sm" ng-click="shortlistApplicant(app)" title="Shortlist Candidate">
+                    ✓ Shortlist
+                  </button>
+                  <button class="btn btn-azure btn-sm" ng-click="scheduleInterview(app)" title="Lock Interview Slot">
+                    📅 Interview
+                  </button>
+                  <button class="btn btn-success btn-sm" ng-click="selectStudentOffer(app)" title="Select & Release Offer">
+                    🎉 Select Offer
+                  </button>
+                  <button class="btn btn-danger btn-sm" ng-click="rejectApplicant(app)" title="Reject">
+                    ✕
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==========================================================================
+         SCREEN 5: PLACEMENT TRAINER / TPO PORTAL
+         (View Students & Resumes, Manage Schedules, Forward Selection Info)
+         ========================================================================== -->
+    <div ng-show="activeTab === 'trainer_portal'">
+      
+      <!-- Trainer Banner -->
+      <div style="background-color: var(--color-corporate-navy); color: #FFFFFF; padding: 20px; border-radius: 8px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--color-accent-cyan);">Office of the Directorate of Training & Placements</span>
+          <h2 style="font-size: 22px; font-weight: 800; color: #FFFFFF; margin-top: 2px;">{{ trainerUser.name }} (Dean TPO)</h2>
+          <p style="font-size: 12px; color: #CBD5E1;">Managing campus recruitment drives, student training sessions, and official selection dispatches.</p>
+        </div>
+        <button class="btn btn-azure" ng-click="navigate('notifications')">
+          View Audit Logs
+        </button>
+      </div>
+
+      <!-- Forward Selection Information to Students (Requirement #11 & #13) -->
+      <div class="card stripe-emerald">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Manage Interview Schedules & Forward Selection Results</h3>
+            <p class="card-subtitle">Verify corporate offers and dispatch formal placement selection notifications to candidates</p>
+          </div>
+          <span class="status-badge status-placed">Official TPO Dispatch</span>
+        </div>
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Candidate Name</th>
+                <th>USN</th>
+                <th>Company & Role</th>
+                <th>Package</th>
+                <th>Interview / Selection Status</th>
+                <th style="text-align: right;">TPO Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="app in applications">
+                <td><strong>{{ app.studentName }}</strong></td>
+                <td class="mono-data">{{ app.studentUsn }}</td>
+                <td>{{ app.company }} ({{ app.role }})</td>
+                <td class="mono-data" style="color: #047857; font-weight: 700;">₹ {{ app.package }} LPA</td>
+                <td>
+                  <span class="status-badge" ng-class="{
+                    'status-applied': app.status === 'Applied',
+                    'status-shortlisted': app.status === 'Shortlisted',
+                    'status-review': app.status === 'Interview Scheduled',
+                    'status-placed': app.status === 'Selected / Placed',
+                    'status-rejected': app.status === 'Rejected'
+                  }">
+                    {{ app.status }}
+                  </span>
+                  <span style="font-size: 11px; color: var(--color-text-muted); margin-left: 6px;">{{ app.currentStage }}</span>
+                </td>
+                <td style="text-align: right;">
+                  <button class="btn btn-azure btn-sm" ng-click="scheduleInterview(app)">
+                    📅 Set Slot
+                  </button>
+                  <button class="btn btn-success btn-sm" ng-click="forwardSelectionToStudent(app)">
+                    📨 Forward to Student
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Student Master Registry & Verified Resumes (Requirement #11) -->
+      <div class="card stripe-azure">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Student Master Directory & Verified Resumes</h3>
+            <p class="card-subtitle">Official academic dossiers and placement status for final year graduating batch</p>
+          </div>
+          <span class="status-badge status-applied">{{ allStudents.length }} Candidates Enrolled</span>
+        </div>
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>USN</th>
+                <th>Branch</th>
+                <th>Semester</th>
+                <th>CGPA</th>
+                <th>Backlogs</th>
+                <th>Status</th>
+                <th>Company / Offer</th>
+                <th>Verified Resume</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="st in allStudents">
+                <td><strong>{{ st.name }}</strong></td>
+                <td class="mono-data">{{ st.usn }}</td>
+                <td><span class="status-badge status-applied">{{ st.dept }}</span></td>
+                <td>{{ st.sem }}</td>
+                <td class="mono-data" style="font-weight: 700; color: #047857;">{{ st.cgpa }}</td>
+                <td class="mono-data">{{ st.backlogs }}</td>
+                <td>
+                  <span class="status-badge" ng-class="st.status === 'Placed' ? 'status-placed' : 'status-review'">
+                    {{ st.status }}
+                  </span>
+                </td>
+                <td>{{ st.company }}</td>
+                <td>
+                  <button class="btn btn-outline btn-sm" ng-click="showToast('Inspecting verified PDF: ' + st.resume)">
+                    📄 {{ st.resume }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==========================================================================
+         SCREEN 6: FEEDBACK & INSIGHTS
+         (Separate Feedback for Placed and Unplaced Students)
+         ========================================================================== -->
+    <div ng-show="activeTab === 'feedback'">
+      
+      <!-- Feedback Submission Form -->
+      <div class="card stripe-azure">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Submit Placement Feedback & Interview Experience</h3>
+            <p class="card-subtitle">Empower junior batches and help the Training Cell refine future bootcamps</p>
+          </div>
+          <div>
+            <!-- Placement Toggle -->
+            <button class="btn btn-sm" ng-class="newFeedback.isPlaced ? 'btn-azure' : 'btn-outline'" ng-click="newFeedback.isPlaced = true">
+              🎉 Placed Student Feedback
+            </button>
+            <button class="btn btn-sm" ng-class="!newFeedback.isPlaced ? 'btn-azure' : 'btn-outline'" ng-click="newFeedback.isPlaced = false">
+              📚 Unplaced / Guidance Request
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <form ng-submit="submitFeedback()">
+            
+            <!-- When student is PLACED -->
+            <div ng-show="newFeedback.isPlaced">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+                <div class="form-group">
+                  <label class="form-label">Placed Company *</label>
+                  <input type="text" class="form-input" ng-model="newFeedback.company" placeholder="e.g. Google, Cisco, Microsoft" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Interview Difficulty Level</label>
+                  <select class="form-select" ng-model="newFeedback.difficulty">
+                    <option value="Easy">Easy</option>
+                    <option value="Moderate">Moderate</option>
+                    <option value="Challenging">Challenging</option>
+                    <option value="Very High">Very High</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Overall Experience Rating (1-5)</label>
+                  <select class="form-select" ng-model="newFeedback.rating">
+                    <option value="5">★★★★★ (5 Stars - Exceptional)</option>
+                    <option value="4">★★★★☆ (4 Stars - Very Good)</option>
+                    <option value="3">★★★☆☆ (3 Stars - Average)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Interview & Coding Questions Asked *</label>
+                <textarea class="form-textarea" rows="2" ng-model="newFeedback.questions" placeholder="e.g. 1. Implement LRU Cache with TTL 2. Explain TCP 3-way handshake..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Preparation Strategy & Tips for Juniors</label>
+                <input type="text" class="form-input" ng-model="newFeedback.tips" placeholder="e.g. Clarify corner cases upfront and practice system design diagrams." />
+              </div>
+            </div>
+
+            <!-- When student is UNPLACED -->
+            <div ng-show="!newFeedback.isPlaced">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+                <div class="form-group">
+                  <label class="form-label">Primary Challenge Area</label>
+                  <select class="form-select" ng-model="newFeedback.challengeArea">
+                    <option value="Quantitative Aptitude & Speed Math">Quantitative Aptitude & Speed Math</option>
+                    <option value="Data Structures & Algorithms">Data Structures & Algorithms</option>
+                    <option value="Technical Interview Whiteboard">Technical Interview Whiteboard</option>
+                    <option value="Communication & HR Rounds">Communication & HR Rounds</option>
+                    <option value="Core Branch Technical Tests">Core Branch Technical Tests</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Desired Training Support from TPO</label>
+                  <input type="text" class="form-input" ng-model="newFeedback.desiredSupport" placeholder="e.g. 1-on-1 mock interviews, core company tests..." />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Detailed Comments & Queries for Placement Trainers *</label>
+                <textarea class="form-textarea" rows="2" ng-model="newFeedback.comments" placeholder="Describe the challenges faced during recent drives and areas where you need guidance..."></textarea>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-azure">
+              Submit My Feedback to Campus Repository
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- FEEDBACK REQUIREMENT #14: Separate Feedback Section for PLACED Students -->
+      <div class="card stripe-cyan">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Placed Candidate Interview Archives</h3>
+            <p class="card-subtitle">Real coding question banks, round-wise breakdowns, and junior advice from students who cracked offers</p>
+          </div>
+          <span class="status-badge status-placed">Placed Students</span>
+        </div>
+        <div class="card-body">
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div ng-repeat="fb in feedbacksPlaced" style="padding: 16px; background-color: var(--color-base-bg); border-radius: 6px; border: 1px solid var(--color-border-subtle);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div>
+                  <strong style="font-size: 15px; color: var(--color-primary-navy);">{{ fb.company }}</strong>
+                  <span style="font-size: 12px; color: var(--color-text-muted); margin-left: 6px;">• {{ fb.studentName }} ({{ fb.department }})</span>
+                </div>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                  <span class="status-badge status-placed">{{ fb.package }}</span>
+                  <span class="status-badge status-shortlisted">Difficulty: {{ fb.difficulty }}</span>
+                </div>
+              </div>
+              <div style="font-size: 12px; margin-bottom: 6px; background: #FFFFFF; padding: 10px; border-radius: 4px; border: 1px solid var(--color-border-light);">
+                <strong style="color: var(--color-corporate-navy);">Questions Asked:</strong>
+                <p style="color: #334155; margin-top: 2px;">{{ fb.questions }}</p>
+              </div>
+              <div style="font-size: 12px; color: #15803D;">
+                <strong>💡 Tip for Juniors:</strong> {{ fb.tips }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEEDBACK REQUIREMENT #14: Separate Feedback Section for UNPLACED Students -->
+      <div class="card stripe-corporate">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Unplaced Students – Preparation Support & Guidance Forum</h3>
+            <p class="card-subtitle">Candidate hurdles, aptitude feedback, and special requests monitored by TPO trainers</p>
+          </div>
+          <span class="status-badge status-review">In-Process Candidates</span>
+        </div>
+        <div class="card-body">
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div ng-repeat="fb in feedbacksUnplaced" style="padding: 16px; background-color: var(--color-base-bg); border-radius: 6px; border: 1px solid var(--color-border-subtle);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div>
+                  <strong style="font-size: 14px; color: var(--color-primary-navy);">{{ fb.studentName }}</strong>
+                  <span style="font-size: 12px; color: var(--color-text-muted); margin-left: 6px;">({{ fb.department }}, {{ fb.usn }})</span>
+                </div>
+                <span class="status-badge status-review">Challenge: {{ fb.challengeArea }}</span>
+              </div>
+              <p style="font-size: 12px; color: #334155; margin-bottom: 6px;">"{{ fb.comments }}"</p>
+              <div style="font-size: 12px; color: var(--color-accent-azure);">
+                <strong>Requested Action:</strong> {{ fb.desiredSupport }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==========================================================================
+         SCREEN 7: NOTIFICATIONS CENTER
+         (Triggered on Application, Forwarding Updates & Status Changes)
+         ========================================================================== -->
+    <div ng-show="activeTab === 'notifications'">
+      <div class="card stripe-azure">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">Placement Notifications & Audit Log</h3>
+            <p class="card-subtitle">Automated updates dispatched to Candidates, Recruiters, and Placement Trainers</p>
+          </div>
+          <div>
+            <button class="btn btn-outline btn-sm" ng-click="markAllNotificationsRead()">
+              Mark All as Read
+            </button>
+          </div>
+        </div>
+        <div class="card-body" style="padding: 0;">
+          <div style="display: flex; flex-direction: column;">
+            <div ng-repeat="notif in notifications" style="padding: 16px 20px; border-bottom: 1px solid var(--color-border-light); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;" ng-style="{'background-color': notif.read ? '#FFFFFF' : 'rgba(239, 246, 255, 0.4)'}">
+              <div style="display: flex; gap: 12px; align-items: flex-start;">
+                <div style="font-size: 20px;">
+                  <span ng-if="notif.targetRole === 'student'">🎓</span>
+                  <span ng-if="notif.targetRole === 'company'">🏢</span>
+                  <span ng-if="notif.targetRole === 'trainer'">👨‍🏫</span>
+                </div>
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <h4 style="font-size: 13px; font-weight: 700; color: var(--color-primary-navy);">{{ notif.title }}</h4>
+                    <span class="status-badge status-applied" style="font-size: 10px; padding: 1px 6px;">For: {{ notif.targetRole | uppercase }}</span>
+                    <span ng-if="!notif.read" class="status-badge status-review" style="font-size: 10px; padding: 1px 6px;">New</span>
+                  </div>
+                  <p style="font-size: 12px; color: #475569; margin-top: 3px;">{{ notif.message }}</p>
+                  <p style="font-size: 11px; color: var(--color-text-muted); margin-top: 4px;">{{ notif.time }}</p>
+                </div>
+              </div>
+
+              <div>
+                <button class="btn btn-outline btn-sm" ng-if="!notif.read" ng-click="markAsRead(notif)">
+                  Mark Read
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==========================================
+       4. Institutional Footer
+       ========================================== -->
+  <footer style="background-color: var(--color-primary-navy); color: #94A3B8; padding: 24px 20px; border-top: 1px solid var(--color-corporate-navy); font-size: 12px; text-align: center;">
+    <div style="max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <strong style="color: #FFFFFF;">Campus Career Connect</strong> – College Placement Management Portal • Academic Year 2025–26
+      </div>
+      <div>
+        Built with beginner-friendly <strong style="color: var(--color-accent-cyan);">AngularJS 1.8.2</strong>, HTML, CSS, JavaScript
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
